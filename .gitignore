@@ -1,3 +1,7 @@
 /.idea
-/__pycache__
+/(Try) Numpy/__pycache__/
+/Standart (Working)/__pycache__/
 /venv
+
+!/Standart (Working)/
+!/(Try) Numpy/
