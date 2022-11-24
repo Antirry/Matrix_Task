@@ -1,9 +1,3 @@
 /.idea
-/(Try) Numpy/__pycache__/
-/Standart (Working)/__pycache__/
-/(Try) Asyncio Standart/__pycache__/
 /venv
-
-!/Standart (Working)/
-!/(Try) Numpy/
-!/(Try) Asyncio Standart/
+/**/__pycache__/
