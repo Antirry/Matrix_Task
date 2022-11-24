@@ -67,14 +67,10 @@ def matrix_format_fun(matrix_form):
     # Например append(0:0+5) - первый массив
 
     for i in range(0, len(matrix_form), list_size):
-        matrix_form_output.append(matrix_form[i:i+list_size])
+        matrix_form_output.append(matrix_form[i:i + list_size])
 
     return matrix_form_output
 
 
 def snake_matrix(n, n_min, n_max):
-    Matrix = matrix_edit_fun(n, n_min, n_max)
-    Matrix_Check = matrix_check_fun(Matrix)
-    Matrix_Sort = matrix_sort_fun(Matrix_Check)
-    Matrix_Form = matrix_format_fun(Matrix_Sort)
-    return Matrix_Form
+    return matrix_format_fun(matrix_sort_fun(matrix_check_fun(matrix_edit_fun(n, n_min, n_max))))
