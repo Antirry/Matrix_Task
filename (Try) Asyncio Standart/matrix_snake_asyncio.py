@@ -53,7 +53,7 @@ async def matrix_sort_fun(matrix_sort):
 
 
 async def matrix_format_fun(matrix_form):
-    matrix_check = asyncio.matrix_check_fun(matrix)
+    matrix_check = loop.create_task(matrix_check_fun(matrix))
     matrix_form_output = list()
 
     # Создаю функцию для нахождения размера списка,
@@ -76,16 +76,19 @@ async def matrix_format_fun(matrix_form):
 
 
 async def snake_matrix(n, n_min, n_max):
-    matrix_form = asyncio.matrix_format_fun(
-        asyncio.matrix_sort_fun(
-            asyncio.matrix_check_fun(
-                asyncio.matrix_edit_fun(n, n_min, n_max)
-            )
-        )
-    )
+    # matrix_form = await asyncio.matrix_format_fun(
+    #     await asyncio.matrix_sort_fun(
+    #         await asyncio.matrix_check_fun(
+    #             await asyncio.matrix_edit_fun(n, n_min, n_max)
+    #         )
+    #     )
+    # )
+    matrix = loop.create_task(matrix_edit_fun(n, n_min, n_max))
+    matrix_check = loop.create_task(matrix_check_fun(await matrix))
+    matrix_sort = loop.create_task(matrix_sort_fun(await matrix_check))
+    matrix_form = loop.create_task(matrix_format_fun(await matrix_sort))
+    await asyncio.wait([matrix, matrix_check, matrix_sort, matrix_form])
 
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(matrix_form)
-    loop.close()
-
-    return await asyncio.wait(matrix_form)
+loop = asyncio.get_event_loop()
+loop.run_forever()
+loop.close()
