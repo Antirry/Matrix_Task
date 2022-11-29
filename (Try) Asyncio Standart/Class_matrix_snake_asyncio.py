@@ -1,5 +1,6 @@
 import random
 import asyncio
+from typing import Optional
 
 """
 C помощью библиотеки from typing import Optional и
@@ -12,12 +13,14 @@ self.НАЗВАНИЕ ФУНКЦИИ_task: Optional[Тип переменной]
 
 
 class MatrixSnake:
-    def __init__(self, n: int, n_min: int, n_max: int, interval: int = 1):
+    def __init__(self, n: int, n_min: int, n_max: int, interval: int = 1, concurrent_level: Optional[int] = None):
         self.n = n
         self.n_min = n_min
         self.n_max = n_max
         self.interval = interval
+        self.concurrent_level = concurrent_level
         self.is_running = False
+        self._matrix_edit_task: Optional[asyncio.Task] = None
 
     async def _matrix_edit_fun(self):
         matrix = list()
@@ -29,9 +32,19 @@ class MatrixSnake:
             await asyncio.sleep(self.interval)
         return matrix
 
+    # async def _matrix_check_fun(self):
+    #     matrix_check = asyncio.create_task(self._matrix_edit_fun())
+    #     # Сравнение строк (длины списков) и столбцов (количество списков)
+    #     while self.is_running:
+    #         for list_check in matrix_check:
+    #             if len(list_check) != len(matrix_check):
+    #                 return self.is_running is False
+    #         await asyncio.sleep(self.interval)
+    #     return matrix_check
+
     def start(self):
         self.is_running = True
-        asyncio.create_task(self._matrix_edit_fun())
+        self._matrix_edit_task = asyncio.create_task(self._matrix_edit_fun())
 
 
 async def start():

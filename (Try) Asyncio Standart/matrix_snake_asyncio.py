@@ -1,8 +1,10 @@
 import random
 import asyncio
+from typing import List
 
 
-async def matrix_edit_fun(n: int, n_min: int, n_max: int) -> list:
+async def matrix_edit_fun(n: int, n_min: int, n_max: int) -> list[list[int]]:
+    await asyncio.sleep(1)
     matrix = list()
     for _ in range(n):
         matrix.append([
@@ -21,21 +23,20 @@ async def matrix_edit_fun(n: int, n_min: int, n_max: int) -> list:
     return matrix
 
 
-async def matrix_check_fun(n: int, n_min: int, n_max: int) -> list:
+async def matrix_check_fun(n: int, n_min: int, n_max: int) -> list[list[int]]:
+    await asyncio.sleep(2)
     asyncio.create_task(matrix_edit_fun(n, n_min, n_max))
     matrix_check = await matrix_edit_fun(n, n_min, n_max)
-    matrix_check = list(matrix_check)
-    for matrix in matrix_check:
-        # Сравнение строк (длины списков) и столбцов (количество списков)
-        for list_check in matrix:
-            if len(list_check) == len(matrix_check):
-                return matrix_check
+    # Сравнение строк (длины списков) и столбцов (количество списков)
+    for list_check in matrix_check:
+        if len(list_check) == len(matrix_check):
+            return matrix_check
 
 
-async def matrix_sort_fun(n: int, n_min: int, n_max: int) -> list:
+async def matrix_sort_fun(n: int, n_min: int, n_max: int) -> list[int]:
+    await asyncio.sleep(3)
     asyncio.create_task(matrix_check_fun(n, n_min, n_max))
     matrix_check_output = await matrix_check_fun(n, n_min, n_max)
-    matrix_check_output = list(matrix_check_output)
     N = len(matrix_check_output)
     matrix_sort_output = list()
 
@@ -50,11 +51,11 @@ async def matrix_sort_fun(n: int, n_min: int, n_max: int) -> list:
     for j in range(N - 1, -1, -1):
         for i in matrix_check_output:
             matrix_sort_output.append(i[j])
-
     return matrix_sort_output
 
 
-async def matrix_format_fun(n: int, n_min: int, n_max: int) -> list:
+async def matrix_format_fun(n: int, n_min: int, n_max: int) -> list[list[int]]:
+    await asyncio.sleep(4)
     asyncio.create_task(matrix_sort_fun(n, n_min, n_max))
     matrix_check = await matrix_check_fun(n, n_min, n_max)
     matrix_form = await matrix_sort_fun(n, n_min, n_max)
@@ -75,16 +76,26 @@ async def matrix_format_fun(n: int, n_min: int, n_max: int) -> list:
 
     for i in range(0, len(matrix_form), list_size):
         matrix_form_output.append(matrix_form[i:i + list_size])
-
     return matrix_form_output
 
 
-async def snake_matrix(n: int, n_min: int, n_max: int):
-    matrix_form = asyncio.create_task(matrix_format_fun(n, n_min, n_max))
+async def snake_matrix(n: int, n_min: int, n_max: int) -> list[list[int]]:
+    await asyncio.sleep(5)
+    asyncio.create_task(matrix_format_fun(n, n_min, n_max))
+    matrix_form = await matrix_format_fun(n, n_min, n_max)
     return matrix_form
+
+
+async def start(n: int, n_min: int, n_max: int):
+    asyncio.create_task(snake_matrix(n, n_min, n_max))
+    await asyncio.gather(matrix_edit_fun(n, n_min, n_max),
+                         matrix_check_fun(n, n_min, n_max),
+                         matrix_sort_fun(n, n_min, n_max),
+                         matrix_format_fun(n, n_min, n_max),
+                         snake_matrix(n, n_min, n_max))
 
 
 def main(n: int, n_min: int, n_max: int):
     loop = asyncio.get_event_loop()
-    loop.create_task(snake_matrix(n, n_min, n_max))
-    loop.run_forever()
+    loop.run_until_complete(start(n, n_min, n_max))
+    loop.close()
