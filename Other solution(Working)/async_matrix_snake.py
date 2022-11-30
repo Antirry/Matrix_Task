@@ -35,12 +35,23 @@ def matrix_check_fun(matrix: str) -> (list[list[int]] | bool):
     Было бы интересно узнать как можно сделать не results[0], а в цикле for,
     то есть -> for result in results, так как он требует глобальных переменных,
     в своем проекте я использовал счетчики для переменных, то есть -> globals()["название" + str(i)]
-    """
-    try:
-        output = [re.findall(r'\d+', matrix[0])]
-        # Находим все значения из списка только числа с помощью отборки в виде \d+
-        matrix_output = [output[0][i::4] for i in range(4)]
 
+    Находим все значения из списка только числа с помощью отборки в виде \d+
+    """
+    output = [re.findall(r'\d+', matrix[0])]
+    output = output[0]
+    """
+    1. Нахожу квадратный корень из массива(то есть, то, сколько может быть в одной строке),
+    для равномерного массива, нужны одинаковые числа то есть, как в нашем примере 4 на 4, все равно что,
+    все наши элементы равны 16 - в квадратном корне равны 4
+    """
+    sqrt = int(len(output) ** 0.5)
+    matrix_output = []
+    while output:
+        matrix_output.append(output[:sqrt])
+        output = output[sqrt:]
+
+    try:
         for list in matrix_output:
             if len(list) != len(matrix_output):
                 return False
@@ -78,9 +89,10 @@ async def get_matrix(SOURCE_URL: str) -> list[list[int]]:
     results = await main(SOURCE_URL)
     return matrix_format_fun(matrix_check_fun(results), matrix_sort_fun(matrix_check_fun(results)))
 
-""" 
-    if __name__ == "__main__":
+"""
+if __name__ == "__main__":
     SOURCE_URL = 'https://raw.githubusercontent.com/avito-tech/python-trainee-assignment/main/matrix.txt'
     results = asyncio.run(main(SOURCE_URL))
+    # print(matrix_format_fun(matrix_check_fun(results), matrix_sort_fun(matrix_check_fun(results))))
     print(matrix_format_fun(matrix_check_fun(results), matrix_sort_fun(matrix_check_fun(results))))
 """
